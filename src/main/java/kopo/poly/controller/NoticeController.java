@@ -59,6 +59,8 @@ public class NoticeController {
         List<NoticeDTO> rList = Optional.ofNullable(noticeService.getNoticeList())
                 .orElseGet(ArrayList::new);
 
+        log.info("rList : " + rList.toString());
+
 //        List<NoticeDTO> rList = noticeService.getNoticeList();
 //
 //        if (rList == null) {
@@ -67,6 +69,8 @@ public class NoticeController {
 
         // 조회된 리스트 결과값 넣어주기
         model.addAttribute("rList", rList);
+
+        log.info(rList.toString());
 
         // 로그 찍기(추후 찍은 로그를 통해 이 함수 호출이 끝났는지 파악하기 용이하다.)
         log.info(this.getClass().getName() + ".noticeList End!");

@@ -3,6 +3,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="kopo.poly.dto.NoticeDTO" %>
 <%@ page import="kopo.poly.util.CmmUtil" %>
+<%--<%@ page import="org.springframework.ui.ModelMap" %>--%>
+
 <%
     // NoticeController 함수에서 model 객체에 저장된 값 불러오기
     List<NoticeDTO> rList = (List<NoticeDTO>) request.getAttribute("rList");
