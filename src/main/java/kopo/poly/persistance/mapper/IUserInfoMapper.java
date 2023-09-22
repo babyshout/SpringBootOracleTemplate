@@ -16,4 +16,8 @@ public interface IUserInfoMapper {
     List<UserInfoDTO> getUserInfoList();
 
     UserInfoDTO getUserInfo(UserInfoDTO pDTO);
+
+    UserInfoDTO getLoginInfo(UserInfoDTO pDTO);
+
+
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -196,4 +197,141 @@ public class UserInfoController {
         log.info(this.getClass().getName() + ".userInfoDTO() END!!!!!!!!!!!!!!!!!!!!");
         return "user/userInfoDetail";
     }
+
+
+    @GetMapping(value = "login")
+    public String login() {
+        log.info(this.getClass().getName() + ".user/login START!!!!!!!!!!!!!");
+
+        log.info(this.getClass().getName() + ".user/login END!!!!!!!!!!!!!");
+        return "user/login";
+    }
+
+    @ResponseBody
+    @PostMapping(value = "loginProc")
+    public MsgDTO loginProc(
+            HttpServletRequest request, HttpSession session
+    ) {
+        log.info(this.getClass().getName() + ".loginProc START!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        int res = 0;
+        String msg = "";
+        MsgDTO dto = null;
+
+        UserInfoDTO pDTO = null;
+
+        try {
+            String userId = CmmUtil.nvl(request.getParameter("userId"));
+            String password = CmmUtil.nvl(request.getParameter("password"));
+
+            pDTO = new UserInfoDTO();
+
+            pDTO.setUserId(userId);
+            pDTO.setPassword(
+                    EncryptUtil.encHashSHA256(password)
+            );
+
+            log.info("pDTO : " + pDTO.toString());
+
+            UserInfoDTO rDTO = userInfoService.getLoginInfo(pDTO);
+
+            if (CmmUtil.nvl(
+                    rDTO.getUserId()).length() > 0
+            ) {
+                res = 1;
+
+                msg = "로그인이 성공했습니다";
+
+                /**
+                 * TODO
+                 * session.setAttribute(SessionEnum.SS_USER_ID.STRING, userId);
+                 * session.setAttribute(SessionEnum.SS_USER_NAME.STRING, rDTO.getUserName());
+                 */
+
+                session.setAttribute("SS_USER_ID", userId);
+                session.setAttribute("SS_USER_NAME", rDTO.getUserName());
+            } else {
+                msg = "아이디와 비밀번호가 올바르지 않습니다";
+            }
+
+
+        } catch (Exception e) {
+            msg = "시스템 문제로 로그인이 실패했습니다.";
+            res = 2;
+            log.info(e.toString());
+            e.printStackTrace();
+        } finally {
+            dto = new MsgDTO();
+            dto.setResult(res);
+            dto.setMsg(msg);
+
+            log.info("dto : " + dto.toString());
+
+            log.info(this.getClass().getName() + ".loginProc END!!!!!!!!!!!!");
+        }
+
+        log.info(this.getClass().getName() + ".loginProc START!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+
+        return dto;
+    }
+
+    @GetMapping(value = "loginResult")
+    public String loginResult(
+            HttpServletRequest request,
+            HttpSession session
+    ) {
+        return "user/loginResult";
+    }
+
+
+    /**
+     * FIXME
+     * 여기서 사용할수 있는 방법 3가지
+     * 1. 정석적으로 model 에 값 넣어주기
+     * 2. JSP 단에서 서비스 호출 해보기
+     * 3. ajax 로 비동기통신 보내서 UserInfoDTO 값 가져오기
+     *
+     * @param request
+     * @param session
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @GetMapping(value = "profile")
+    public String userInfoDetail(
+            HttpServletRequest request,
+            HttpSession session,
+            Model model
+    ) throws Exception {
+        log.info(this.getClass().getName() + "/user/userInfoDetail START!!!!!!!!!!!!!!!!!!!!!!!");
+
+        String ssUserId = Optional.ofNullable(
+                (String) session.getAttribute("SS_USER_ID")
+        ).orElseGet(String::new);
+
+        if (ssUserId.equals("")) {
+            log.info("SS_USER_ID is null! " + ssUserId);
+            return "user/login";
+        } else {
+            log.info("SS_USER_ID is not null! " + ssUserId);
+
+            UserInfoDTO pDTO = new UserInfoDTO();
+            pDTO.setUserId(ssUserId);
+
+            UserInfoDTO rDTO = userInfoService.getUserInfo(pDTO);
+
+            model.addAttribute("rDTO", rDTO);
+
+
+            model.addAttribute("userInfoService", userInfoService);
+
+            log.info(this.getClass().getName() + "/user/userInfoDetail END!!!!!!!!!!!!!!!!!!!!!!!");
+            return "user/profile/profileJSP";
+        }
+
+
+    }
+
+
 }

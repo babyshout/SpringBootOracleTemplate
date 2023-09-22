@@ -49,4 +49,12 @@
         SELECT * FROM USER_INFO
         WHERE USER_ID = #{userId}
     </select>
+
+    <select id="getLoginInfo" resultType="UserInfoDTO" parameterType="UserInfoDTO">
+        SELECT USER_ID, USER_NAME, EMAIL
+        FROM USER_INFO
+
+        WHERE USER_ID = #{userId}
+        AND PASSWORD = #{password}
+    </select>
 </mapper>
