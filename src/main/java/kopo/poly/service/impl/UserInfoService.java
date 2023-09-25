@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -46,6 +47,12 @@ public class UserInfoService implements IUserInfoService {
 
         String existsYn = CmmUtil.nvl(rDTO.getExistsYn());
         log.info("existYn : " + existsYn);
+
+//        Object obj = new Object();
+//
+//        System.out.println(
+//                new String("asdf").equals(new String("asdf"))
+//        );
 
         if (existsYn.equals("N")) {
 

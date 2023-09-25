@@ -2,6 +2,7 @@ package kopo.poly.controller;
 
 import kopo.poly.dto.MsgDTO;
 import kopo.poly.dto.UserInfoDTO;
+import kopo.poly.enumx.SessionEnum;
 import kopo.poly.service.IUserInfoService;
 import kopo.poly.util.CmmUtil;
 import kopo.poly.util.EncryptUtil;
@@ -42,12 +43,17 @@ public class UserInfoController {
         log.info(this.getClass().getName() + ".getUserIdExists START!!!!!!!!!!!!!");
         log.info(this.getClass().getName() + ".getUserIdExists START!!!!!!!!!!!!!");
 
+
         String userId = CmmUtil.nvl(request.getParameter("userId"));
 
         log.info("userId : " + userId);
 
         UserInfoDTO pDTO = new UserInfoDTO();
         pDTO.setUserId(userId);
+
+        log.info("pDTO : " + pDTO.toString());
+
+
 
         UserInfoDTO rDTO = Optional.ofNullable(
                 userInfoService.getUserIdExists(pDTO)
@@ -116,6 +122,8 @@ public class UserInfoController {
             pDTO.setAddr1(addr1);
             pDTO.setAddr2(addr2);
 
+            log.info("pDTO : " + pDTO.toString());
+
 
             res = userInfoService.insertUserInfo(pDTO);
 
@@ -145,6 +153,15 @@ public class UserInfoController {
         return dto;
     }
 
+    @GetMapping(value = "test")
+    public String test(
+            HttpServletRequest request,
+            Model model,
+            ModelMap modelMap
+    ) {
+        return "test";
+    }
+
 
     @GetMapping(value = "userInfoList")
     public String userInfoList(
@@ -154,6 +171,24 @@ public class UserInfoController {
         log.info(this.getClass().getName() + ".userInfoList START!!!!!!!!!!!!!");
 
         List<UserInfoDTO> rList = userInfoService.getUserInfoList();
+
+//        rList.stream().parallel(dto -> {
+//            dto.setEmail(EncryptUtil.decAES128CBC(CmmUtil.nvl(dto.getEmail())));
+//        });
+        
+        rList.parallelStream().forEach(userInfoDTO -> {
+            // 여기서 try catch 로 감싸줘야하는 이유는 -> stream() 객체는 일급객체로 취급되어서, 안쪽에서 try catch 해줘야 함
+            try {
+                userInfoDTO.setEmail(
+                        EncryptUtil.decAES128CBC(CmmUtil.nvl(userInfoDTO.getEmail()))
+                );
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+//        rList.stream()
+
 
         for (UserInfoDTO dto :
                 rList) {
@@ -175,7 +210,7 @@ public class UserInfoController {
     ) throws Exception {
         log.info(this.getClass().getName() + ".userInfoDTO() START!!!!!!!!!!!!!!!!!!!!");
 
-        String requestedUserId = request.getParameter("uId");
+        String requestedUserId = request.getParameter("uId"); // 변수명이 너무 길어요 ㅜㅜ
 
         UserInfoDTO pDTO = new UserInfoDTO();
         pDTO.setUserId(requestedUserId);
@@ -214,6 +249,10 @@ public class UserInfoController {
     ) {
         log.info(this.getClass().getName() + ".loginProc START!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
+//        String userId = "user01";
+//
+//        session.setAttribute(String.valueOf(SessionEnum.USER_ID), userId);
+
         int res = 0;
         String msg = "";
         MsgDTO dto = null;
@@ -248,7 +287,8 @@ public class UserInfoController {
                  * session.setAttribute(SessionEnum.SS_USER_NAME.STRING, rDTO.getUserName());
                  */
 
-                session.setAttribute("SS_USER_ID", userId);
+
+//                session.setAttribute(SessionEnum.USER_ID, userId);
                 session.setAttribute("SS_USER_NAME", rDTO.getUserName());
             } else {
                 msg = "아이디와 비밀번호가 올바르지 않습니다";

@@ -16,7 +16,9 @@
         let emailAuthNumber = "";
 
         $(function () {
-            let f = document.getElementById("f");
+            const f = document.getElementById("f");
+
+
 
             $("#btnUserId").on('click', function () {
                 userIdExists(f);
@@ -46,7 +48,7 @@
                 url: '/user/getUserIdExists',
                 type: 'post',
                 dataType: 'JSON',
-                data: $("#f").serialize(),
+                data: $("#f").serialize(),  //
                 success: function (json) {
                     if (json.existsYn === 'Y') {
                         alert("이미 가입된 아이디가 존재합니다.");
@@ -142,6 +144,9 @@
                 f.authNumber.focus();
                 return;
             }
+
+            // === ->
+
             if (f.authNumber.value !== emailAuthNumber + "") {
                 alert("이메일 인증번호가 일치하지 않습니다.");
                 console.log(f.authNumber.value + typeof f.authNumber.value);
