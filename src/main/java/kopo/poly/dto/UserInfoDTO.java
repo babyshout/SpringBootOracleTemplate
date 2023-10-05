@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class UserInfoDTO {
 
-    private String userId = "test";
+    private String userId;
     private String userName;
     private String password;
     private String email;

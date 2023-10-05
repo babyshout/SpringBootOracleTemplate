@@ -19,5 +19,9 @@ public interface IUserInfoMapper {
 
     UserInfoDTO getLoginInfo(UserInfoDTO pDTO);
 
+    UserInfoDTO getUserId(UserInfoDTO pDTO);
+
+    int updatePassword(UserInfoDTO pDTO);
+
 
 }

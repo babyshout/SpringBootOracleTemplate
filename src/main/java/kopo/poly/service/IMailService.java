@@ -1,6 +1,7 @@
 package kopo.poly.service;
 
 import kopo.poly.dto.MailDTO;
+import kopo.poly.dto.UserInfoDTO;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface IMailService {
      * @return MailDTO 가 담긴 List
      */
     List<MailDTO> getMailList();
+
+//    UserInfoDTO authorizeEmail(UserInfoDTO pDTO);
 }

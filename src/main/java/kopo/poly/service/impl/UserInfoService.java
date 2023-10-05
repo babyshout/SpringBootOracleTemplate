@@ -162,4 +162,50 @@ public class UserInfoService implements IUserInfoService {
         log.info(this.getClass().getName() + " 로그인 시작!");
         return rDTO;
     }
+
+    @Override
+    public UserInfoDTO searchUserIdOrPasswordProc(UserInfoDTO pDTO) {
+        log.info(this.getClass().getName() + ".searchUserIdOrPasswordProc() START!!!!!!!!!!!!!!");
+
+        UserInfoDTO rDTO = userInfoMapper.getUserId(pDTO);
+
+        log.info(this.getClass().getName() + ".searchUserIdOrPasswordProc() END!!!!!!!!!!!!!!");
+        return rDTO;
+    }
+
+    @Override
+    public int newPasswordProc(UserInfoDTO pDTO) {
+        log.info(this.getClass().getName() + ".newPasswordProc Start!!!!!!!!!!!!!!!!!!!!!");
+
+        int success = userInfoMapper.updatePassword(pDTO);
+
+        log.info(this.getClass().getName() + ".newPasswordProc END!!!!!!!!!!!!!!!!!!!!!");
+        return success;
+    }
+
+    @Override
+    public UserInfoDTO passwordEmailAuthProc(UserInfoDTO pDTO) throws Exception {
+
+        int authNumber = ThreadLocalRandom.current().nextInt(100000, 1000000);
+
+        log.info("authNumber : " + authNumber);
+
+        MailDTO mailDTO = new MailDTO();
+
+        mailDTO.setTitle("이메일 중복 확인 인증번호 발송 메일");
+        mailDTO.setContents("인증번호는 " + authNumber + " 입니다.");
+        mailDTO.setToMail(EncryptUtil.decAES128CBC(CmmUtil.nvl(pDTO.getEmail())));
+
+        log.info("mailDTO : " + mailDTO.toString());
+
+
+        mailService.doSendMail(mailDTO);
+
+        UserInfoDTO rDTO = new UserInfoDTO();
+        rDTO.setAuthNumber(authNumber);
+
+        return rDTO;
+    }
+
+
 }
