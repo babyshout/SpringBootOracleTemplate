@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kopo.poly.persistance.mapper.IOcrMapper">
+    <select id="getOcrList" resultType="OcrDTO">
+        SELECT * FROM OCR
+    </select>
+    <insert id="insertOcr" parameterType="OcrDTO">
+        INSERT INTO OCR
+        (SEQ,
+         FILE_PATH,
+         FILE_NAME,
+         TEXT_FROM_IMAGE,
+         ORIGINAL_FILE_NAME,
+         EXT,
+         REG_ID
+         CHG_ID)
+        VALUES
+            (#{seq},
+             #{filePath},
+             #{fileName},
+             #{textFromImage},
+             #{originalFileName},
+             #{ext},
+             #{regId},
+             #{chgId})
+    </insert>
+</mapper>
