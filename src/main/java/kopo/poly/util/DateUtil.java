@@ -1,6 +1,9 @@
 package kopo.poly.util;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateUtil {
@@ -27,4 +30,24 @@ public class DateUtil {
         return getDateTime("yyyy.MM.dd");
 
     }
+
+    public static String getLongDateTime(Object time) {
+        return getLongDateTime(time, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static String getLongDateTime(Integer time) {
+        return getLongDateTime(time, "yyyy-MM-dd HH:mm:ss");
+    }
+
+    public static String getLongDateTime(Object time, String dateFormat) {
+        return getLongDateTime((Integer) time, dateFormat);
+    }
+
+    public static String getLongDateTime(Integer time, String dateFormat) {
+        Instant instant = Instant.ofEpochSecond(time);
+        return DateTimeFormatter.ofPattern(dateFormat)
+                .withZone(ZoneId.systemDefault())
+                .format(instant);
+    }
+
 }

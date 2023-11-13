@@ -4,6 +4,6 @@ import kopo.poly.dto.WeatherDTO;
 
 import java.io.IOException;
 
-public interface IWeatherService {
+public interface IWeatherCrawlingService {
     WeatherDTO todayWeather() throws IOException;
 }
